@@ -98,9 +98,9 @@ static int make_juicer_pre_file_from_bin(char *f, char *agp, char *fai, uint8_t 
                 ++pair_u;
             } else {
                 if (strcmp(dict->s[i0].name, dict->s[i1].name) <= 0)
-                    fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 >> scale, dict->s[i1].name, p1 >> scale);
+                    fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 / scale, dict->s[i1].name, p1 / scale);
                 else
-                    fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 >> scale, dict->s[i0].name, p0 >> scale);
+                    fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 / scale, dict->s[i0].name, p0 / scale);
             }
         }
     }
@@ -194,9 +194,9 @@ static int make_juicer_pre_file_from_bed(char *f, char *agp, char *fai, uint8_t 
                     }
                 } else {
                     if (strcmp(dict->s[i0].name, dict->s[i1].name) <= 0)
-                        fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 >> scale, dict->s[i1].name, p1 >> scale);
+                        fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 / scale, dict->s[i1].name, p1 / scale);
                     else
-                        fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 >> scale, dict->s[i0].name, p0 >> scale);
+                        fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 / scale, dict->s[i0].name, p0 / scale);
                     
                     ++pair_c;
                 }
@@ -297,9 +297,9 @@ static int make_juicer_pre_file_from_pa5(char *f, char *agp, char *fai, int8_t m
             }
         } else {
             if (strcmp(dict->s[i0].name, dict->s[i1].name) <= 0)
-                fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 >> scale, dict->s[i1].name, p1 >> scale);
+                fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 / scale, dict->s[i1].name, p1 / scale);
             else
-                fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 >> scale, dict->s[i0].name, p0 >> scale);
+                fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 / scale, dict->s[i0].name, p0 / scale);
 
             ++pair_c;
         }
@@ -384,8 +384,8 @@ static int make_juicer_pre_file_from_bam(char *f, char *agp, char *fai, uint8_t 
     rec_c = pair_c = 0;
     buff = 0;    
     
-    if (so == ORDER_NAME) {
-        // sorted by read names
+    if (so == ORDER_NAME || so == ORDER_UNSORTED) {
+        // sorted by read names or unsorted
         while (bam_read1(fp, b) >= 0 ) {
 
             if (++rec_c % 1000000 == 0)
@@ -430,9 +430,9 @@ static int make_juicer_pre_file_from_bam(char *f, char *agp, char *fai, uint8_t 
                         }
                     } else {
                         if (strcmp(dict->s[i0].name, dict->s[i1].name) <= 0)
-                            fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 >> scale, dict->s[i1].name, p1 >> scale);
+                            fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 / scale, dict->s[i1].name, p1 / scale);
                         else
-                            fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 >> scale, dict->s[i0].name, p0 >> scale);
+                            fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 / scale, dict->s[i0].name, p0 / scale);
 
                         ++pair_c;
                     }
@@ -456,7 +456,7 @@ static int make_juicer_pre_file_from_bam(char *f, char *agp, char *fai, uint8_t 
     } else {
         // sorted by coordinates or others
         if (mq > 0)
-            fprintf(stderr, "[W::%s] BAM file is not sorted by read name. Filtering by mapping quality %hhu suppressed \n", __func__, mq);
+            fprintf(stderr, "[W::%s] BAM file is not sorted by read name or unsorted. Filtering by mapping quality %hhu suppressed \n", __func__, mq);
 
         while (bam_read1(fp, b) >= 0 ) {
             
@@ -493,9 +493,9 @@ static int make_juicer_pre_file_from_bam(char *f, char *agp, char *fai, uint8_t 
                 }
             } else {
                 if (strcmp(dict->s[i0].name, dict->s[i1].name) <= 0)
-                    fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 >> scale, dict->s[i1].name, p1 >> scale);
+                    fprintf(fo, "0\t%s\t%lu\t0\t1\t%s\t%lu\t1\n", dict->s[i0].name, p0 / scale, dict->s[i1].name, p1 / scale);
                 else
-                    fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 >> scale, dict->s[i0].name, p0 >> scale);
+                    fprintf(fo, "0\t%s\t%lu\t1\t1\t%s\t%lu\t0\n", dict->s[i1].name, p1 / scale, dict->s[i0].name, p0 / scale);
         
                 ++pair_c;
             }
@@ -523,7 +523,7 @@ static int make_juicer_pre_file_from_bam(char *f, char *agp, char *fai, uint8_t 
 }
 
 static uint64_t assembly_annotation(const char *f, sdict_t *sdict, const char *out_agp, const char *out_annot, 
-        const char *out_lift, int *scale, uint64_t max_s, uint64_t *g)
+        const char *out_lift, int *scale, uint64_t *g)
 {
     uint32_t i, j, c, n, m;
     int *seqs;
@@ -574,13 +574,13 @@ static uint64_t assembly_annotation(const char *f, sdict_t *sdict, const char *o
 
     asm_destroy(dict);
 
-    scaled_gs = linear_scale(genome_size, scale, max_s);
+    scaled_gs = linear_scale(genome_size, scale);
     *g = genome_size;
     
     return scaled_gs;
 }
 
-uint64_t assembly_scale_max_seq(asm_dict_t *dict, int *scale, uint64_t max_s, uint64_t *g)
+uint64_t assembly_scale_max_seq(asm_dict_t *dict, int *scale, uint64_t *g)
 {
     uint32_t i;
     uint64_t s;
@@ -594,7 +594,7 @@ uint64_t assembly_scale_max_seq(asm_dict_t *dict, int *scale, uint64_t max_s, ui
     
     *g = s;
 
-    return linear_scale(s, scale, max_s);
+    return linear_scale(s, scale);
 }
 
 static void print_help_pre(FILE *fp_help)
@@ -735,7 +735,7 @@ static int main_pre(int argc, char *argv[])
     uint64_t max_s, scaled_s;
     
     sdict = make_sdict_from_index(fai, 0);
-    scale = 0;
+    scale = 1;
     max_s = scaled_s = 0;
     agp1 = (char *) malloc(MAX(strlen(agp), out? strlen(out) : 0) + 35);
     if (asm_mode) {
@@ -744,12 +744,12 @@ static int main_pre(int argc, char *argv[])
         sprintf(agp1, "%s.assembly.agp", out);
         sprintf(annot, "%s.assembly", out);
         sprintf(lift, "%s.liftover.agp", out);
-        scaled_s = assembly_annotation(agp, sdict, agp1, annot, lift, &scale, (uint64_t) INT_MAX, &max_s);
+        scaled_s = assembly_annotation(agp, sdict, agp1, annot, lift, &scale, &max_s);
         dict = make_asm_dict_from_agp(sdict, agp1, 1);
     } else {
         sprintf(agp1, "%s", agp);
         dict = make_asm_dict_from_agp(sdict, agp1, 1);
-        scaled_s = assembly_scale_max_seq(dict, &scale, (uint64_t) INT_MAX, &max_s);
+        scaled_s = assembly_scale_max_seq(dict, &scale, &max_s);
     }
 
     if (f_type == BAM) {
@@ -768,22 +768,22 @@ static int main_pre(int argc, char *argv[])
 
     if (asm_mode) {
         fprintf(stderr, "[I::%s] genome size: %lu\n", __func__, max_s);
-        fprintf(stderr, "[I::%s] scale factor: %d\n", __func__, 1 << scale);
+        fprintf(stderr, "[I::%s] scale factor: %d\n", __func__, scale);
         fprintf(stderr, "[I::%s] chromosome sizes for juicer_tools pre -\n", __func__);
         fprintf(stderr, "PRE_C_SIZE: assembly %lu\n", scaled_s);
         fprintf(stderr, "[I::%s] JUICER_PRE CMD: java -Xmx36G -jar ${juicer_tools} pre %s %s.hic <(echo \"assembly %lu\")\n", 
                 __func__, out1, out, scaled_s);
     } else {
-        if (scale) {
-            fprintf(stderr, "[W::%s] maximum scaffold length exceeds %d (=%lu)\n", __func__, INT_MAX, max_s);
-            fprintf(stderr, "[W::%s] using scale factor: %d\n", __func__, 1 << scale);
+        if (scale > 1) {
+            fprintf(stderr, "[W::%s] maximum scaffold length exceeds 2100000000 (=%lu)\n", __func__, max_s);
+            fprintf(stderr, "[W::%s] using scale factor: %d\n", __func__, scale);
         }
         fprintf(stderr, "[I::%s] chromosome sizes for juicer_tools pre -\n", __func__);
         uint32_t i;
         sd_aseq_t seq;
         for (i = 0; i < dict->n; ++i) {
             seq = dict->s[i];
-            fprintf(stderr, "PRE_C_SIZE: %s %lu\n", seq.name, (seq.len + seq.gap) >> scale);
+            fprintf(stderr, "PRE_C_SIZE: %s %lu\n", seq.name, (seq.len + seq.gap) / scale);
         }
     }
 

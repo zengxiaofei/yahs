@@ -186,17 +186,10 @@ inline uint32_t div_ceil(uint64_t x, uint32_t y)
     return 1 + b;
 }
 
-uint64_t linear_scale(uint64_t g, int *scale, uint64_t max_g)
+uint64_t linear_scale(uint64_t g, int *scale)
 {
-    int s;
-    s = 0;
-    while (g > max_g) {
-        ++s;
-        g >>= 1;
-    }
-    
-    *scale = s;
-    return g;
+    *scale = 1 + g / 2100000000;
+    return g / *scale;
 }
 
 void write_bin_header(FILE *fo)

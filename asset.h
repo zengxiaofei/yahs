@@ -54,7 +54,7 @@ void ram_limit(long *total, long *avail);
 int file_copy(char *fin, char *fout);
 int8_t is_read_pair(const char *rname0, const char *rname1);
 uint32_t div_ceil(uint64_t x, uint32_t y);
-uint64_t linear_scale(uint64_t g, int *scale, uint64_t max_g);
+uint64_t linear_scale(uint64_t g, int *scale);
 void write_bin_header(FILE *fo);
 int is_valid_bin_header(int64_t magic_number);
 int strcmp_case_insensitive(const char *s1, const char *s2);
